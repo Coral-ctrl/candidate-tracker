@@ -10,3 +10,7 @@ export async function connectToDatabase(mongoUri: string): Promise<void> {
 export function isDatabaseConnected(): boolean {
   return mongoose.connection.readyState === 1; // 1 = connected
 }
+
+export async function disconnectFromDatabase(): Promise<void> {
+  await mongoose.disconnect();
+}
