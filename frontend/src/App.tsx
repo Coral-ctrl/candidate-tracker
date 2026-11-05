@@ -1,30 +1,41 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { CandidateList } from "./components/CandidateList";
 
-// The shape of the JSON our /api/health route returns
-interface HealthResponse {
-  status: string;
-  database: "connected" | "disconnected";
-}
+// Which screen is showing. A "discriminated union": `name` tells TypeScript which shape it has,
+// so candidateId can only be read once we've checked we're on the detail screen.
+type View =
+  | { name: "list" }
+  | { name: "new" }
+  | { name: "detail"; candidateId: string };
 
 function App() {
-  const [healthMessage, setHealthMessage] = useState("Checking connection...");
-
-  useEffect(() => {
-    // Goes React → Vite proxy → Express → MongoDB status → back
-    fetch("/api/health")
-      .then((response) => response.json() as Promise<HealthResponse>)
-      .then((data) =>
-        setHealthMessage(`API: ${data.status} · Database: ${data.database}`)
-      )
-      .catch(() =>
-        setHealthMessage("Can't reach the API. Is the server running?")
-      );
-  }, []); // empty array = run once when the page loads
+  const [view, setView] = useState<View>({ name: "list" });
+  const showList = () => setView({ name: "list" });
 
   return (
     <main>
       <h1>Candidate Tracker</h1>
-      <p>{healthMessage}</p>
+
+      {view.name === "list" && (
+        <CandidateList
+          onAdd={() => setView({ name: "new" })}
+          onSelect={(candidateId) => setView({ name: "detail", candidateId })}
+        />
+      )}
+
+      {/* Temporary placeholders: replaced in 3B and 3C */}
+      {view.name === "new" && (
+        <section>
+          <p>The add-candidate form arrives in 3B.</p>
+          <button onClick={showList}>Back to list</button>
+        </section>
+      )}
+      {view.name === "detail" && (
+        <section>
+          <p>The detail page for candidate {view.candidateId} arrives in 3C.</p>
+          <button onClick={showList}>Back to list</button>
+        </section>
+      )}
     </main>
   );
 }
