@@ -106,3 +106,34 @@ th {
 .error {
   color: var(--error);
 }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 560px;
+}
+
+.form h2 {
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+input,
+textarea {
+  font: inherit;
+  padding: 6px 10px;
+  box-sizing: border-box;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+}
