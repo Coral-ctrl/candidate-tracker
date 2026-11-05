@@ -1,5 +1,9 @@
 import type { ErrorRequestHandler } from "express";
-import { NotFoundError, ValidationError } from "../utils/errors";
+import {
+  NotFoundError,
+  SummaryUnavailableError,
+  ValidationError,
+} from "../utils/errors";
 
 /**
  * Express recognises an error handler by it having FOUR parameters (err, req, res, next),
@@ -18,6 +22,11 @@ export const errorHandler: ErrorRequestHandler = (
   }
   if (error instanceof NotFoundError) {
     res.status(404).json({ error: error.message });
+    return;
+  }
+  // 503 = a service we depend on is unavailable, and trying again later may work
+  if (error instanceof SummaryUnavailableError) {
+    res.status(503).json({ error: error.message });
     return;
   }
   // express.json() throws a SyntaxError when the body isn't valid JSON.

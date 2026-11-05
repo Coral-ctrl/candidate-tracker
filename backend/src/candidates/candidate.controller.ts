@@ -62,5 +62,9 @@ export function createCandidateController(service: CandidateService) {
     async unarchive(req: Request<{ id: string }>, res: Response) {
       res.json(await service.unarchive(req.params.id));
     },
+
+    async generateSummary(req: Request<{ id: string }>, res: Response) {
+      res.json(await service.generateSummary(req.params.id));
+    },
   };
 }

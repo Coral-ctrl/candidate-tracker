@@ -4,13 +4,21 @@ import { createCandidateService } from "./candidates/candidate.service";
 import { InMemoryCandidateRepository } from "./candidates/inMemoryCandidateRepository";
 import { withServer } from "./utils/testServer";
 
+// This test never generates a summary, so this only has to satisfy the type
+const unusedSummaries = {
+  generateSummary: async () => {
+    throw new Error("not used in this test");
+  },
+};
+
 describe("GET /api/health", () => {
   test("reports database status from the injected dependency", async () => {
     // Fakes for both dependencies: no real database needed
     const app = createApp({
       isDatabaseConnected: () => false,
       candidateService: createCandidateService(
-        new InMemoryCandidateRepository()
+        new InMemoryCandidateRepository(),
+        unusedSummaries
       ),
     });
 

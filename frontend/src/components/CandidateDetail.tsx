@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   addNote,
   archiveCandidate,
+  generateSummary,
   getCandidate,
   moveStage,
   STAGES,
@@ -10,6 +11,7 @@ import {
   type Stage,
 } from "../api/candidates";
 import { formatDate, formatDateTime, formatStage } from "../format";
+import { SummaryPanel } from "./SummaryPanel";
 
 function errorMessage(caught: unknown): string {
   return caught instanceof Error ? caught.message : "Something went wrong";
@@ -33,11 +35,21 @@ export function CandidateDetail({ candidateId, onBack }: CandidateDetailProps) {
   const [actionError, setActionError] = useState<string | null>(null);
   const [noteError, setNoteError] = useState<string | null>(null);
 
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+
   useEffect(() => {
     let ignore = false; // same stale-response guard as CandidateList
     getCandidate(candidateId)
       .then((result) => {
-        if (!ignore) setCandidate(result);
+        if (ignore) return;
+        setCandidate(result);
+        // The "auto-generate": when a candidate without a summary is opened. StrictMode runs this
+        // effect twice in development, but the first run is ignored by then, so only one AI call is made.
+        if (!result.summary) {
+          generateSummary(candidateId)
+            .then(setCandidate)
+            .catch((caught: unknown) => setSummaryError(errorMessage(caught)));
+        }
       })
       .catch((caught: unknown) => {
         if (!ignore) setLoadError(errorMessage(caught));
@@ -150,7 +162,7 @@ export function CandidateDetail({ candidateId, onBack }: CandidateDetailProps) {
         <dd>{formatDate(candidate.createdAt)}</dd>
       </dl>
 
-      {/* The AI summary panel goes here in Step 4 */}
+      <SummaryPanel summary={candidate.summary} error={summaryError} />
 
       <h3>Resume or cover letter</h3>
       {/* Plain text in JSX is escaped by React, so a resume containing <script> or other HTML

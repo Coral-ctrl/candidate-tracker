@@ -2,6 +2,7 @@ import type {
   Candidate,
   CandidateFilters,
   CandidateRepository,
+  CandidateSummary,
   NewCandidate,
 } from "./candidate.types";
 import type { Stage } from "./stages";
@@ -55,6 +56,15 @@ export class InMemoryCandidateRepository implements CandidateRepository {
   async setArchived(id: string, archived: boolean): Promise<Candidate | null> {
     return this.modify(id, (c) => {
       c.archived = archived;
+    });
+  }
+
+  async setSummary(
+    id: string,
+    summary: CandidateSummary
+  ): Promise<Candidate | null> {
+    return this.modify(id, (c) => {
+      c.summary = summary;
     });
   }
 

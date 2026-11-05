@@ -1,15 +1,13 @@
 import type { Stage } from "./stages";
+import type { GeneratedSummary } from "../summary/summary.types";
 
 export interface Note {
   text: string;
   createdAt: Date;
 }
 
-export interface CandidateSummary {
-  skills: string[];
-  highlights: string[];
-  generatedAt: Date;
-}
+// The AI module's result, plus when it was made
+export type CandidateSummary = GeneratedSummary & { generatedAt: Date };
 
 /** What the rest of the app sees. Plain data: no Mongoose types, `id` is a string. */
 export interface Candidate {
@@ -22,7 +20,7 @@ export interface Candidate {
   source?: string;
   stage: Stage;
   notes: Note[];
-  summary?: CandidateSummary; // filled by the AI module later; schema is ready now
+  summary?: CandidateSummary; // undefined until first generated
   archived: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -48,4 +46,5 @@ export interface CandidateRepository {
   addNote(id: string, text: string): Promise<Candidate | null>;
   updateStage(id: string, stage: Stage): Promise<Candidate | null>;
   setArchived(id: string, archived: boolean): Promise<Candidate | null>;
+  setSummary(id: string, summary: CandidateSummary): Promise<Candidate | null>;
 }

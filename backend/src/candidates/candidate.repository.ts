@@ -4,6 +4,7 @@ import type {
   Candidate,
   CandidateFilters,
   CandidateRepository,
+  CandidateSummary,
   NewCandidate,
 } from "./candidate.types";
 import type { Stage } from "./stages";
@@ -69,6 +70,10 @@ export class MongooseCandidateRepository implements CandidateRepository {
 
   setArchived(id: string, archived: boolean): Promise<Candidate | null> {
     return this.update(id, { $set: { archived } });
+  }
+
+  setSummary(id: string, summary: CandidateSummary): Promise<Candidate | null> {
+    return this.update(id, { $set: { summary } }); // replaces any earlier summary
   }
 
   // Shared helper: apply an update and return the document AFTER the change (or null if not found).

@@ -3,8 +3,18 @@ import { createCandidateService } from "./candidate.service";
 import { InMemoryCandidateRepository } from "./inMemoryCandidateRepository";
 import { NotFoundError, ValidationError } from "../utils/errors";
 
+// These tests never generate a summary, so this only has to satisfy the type
+const unusedSummaries = {
+  generateSummary: async () => {
+    throw new Error("not used in this test");
+  },
+};
+
 function makeService() {
-  return createCandidateService(new InMemoryCandidateRepository());
+  return createCandidateService(
+    new InMemoryCandidateRepository(),
+    unusedSummaries
+  );
 }
 
 const validInput = {

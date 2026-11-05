@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import { STAGES } from "./stages";
 import type { Candidate } from "./candidate.types";
+import { CONTENT_QUALITIES } from "../summary/summary.types";
 
 // The stored shape: like Candidate, but Mongoose adds _id and manages timestamps.
 export type CandidateDocument = Omit<Candidate, "id">;
@@ -15,8 +16,14 @@ const noteSchema = new Schema(
 
 const summarySchema = new Schema(
   {
+    contentQuality: {
+      type: String,
+      enum: [...CONTENT_QUALITIES],
+      required: true,
+    },
     skills: { type: [String], default: [] },
     highlights: { type: [String], default: [] },
+    injectionSuspected: { type: Boolean, required: true },
     generatedAt: { type: Date, required: true },
   },
   { _id: false }

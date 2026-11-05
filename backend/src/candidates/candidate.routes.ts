@@ -14,6 +14,7 @@ export function createCandidateRouter(service: CandidateService): Router {
   router.patch("/:id/stage", controller.moveStage); // PATCH = partial update of one field
   router.post("/:id/archive", controller.archive);
   router.post("/:id/unarchive", controller.unarchive);
+  router.post("/:id/summary", controller.generateSummary); // POST: it costs money and changes data
 
   return router;
 }

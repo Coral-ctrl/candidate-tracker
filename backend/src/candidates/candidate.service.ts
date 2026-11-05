@@ -8,8 +8,12 @@ import {
   type ListQuery,
 } from "./candidate.validation";
 import type { Candidate, CandidateRepository } from "./candidate.types";
+import type { SummaryService } from "../summary/summary.service";
 
-export function createCandidateService(repository: CandidateRepository) {
+export function createCandidateService(
+  repository: CandidateRepository,
+  summaries: SummaryService
+) {
   // The repository returns null for "no such id"; the service turns that into an error
   async function orNotFound(
     pending: Promise<Candidate | null>
@@ -47,6 +51,16 @@ export function createCandidateService(repository: CandidateRepository) {
     },
     archive: (id: string) => orNotFound(repository.setArchived(id, true)),
     unarchive: (id: string) => orNotFound(repository.setArchived(id, false)),
+
+    // Looks the candidate up first, so an unknown id is a 404 and never costs an AI call.
+    // If generating fails, nothing is saved, so any earlier summary stays in place.
+    async generateSummary(id: string) {
+      const candidate = await orNotFound(repository.findById(id));
+      const summary = await summaries.generateSummary(candidate.resumeText);
+      return orNotFound(
+        repository.setSummary(id, { ...summary, generatedAt: new Date() })
+      );
+    },
   };
 }
 

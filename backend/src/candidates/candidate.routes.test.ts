@@ -3,6 +3,8 @@ import { createApp } from "../app";
 import { createCandidateService } from "./candidate.service";
 import { InMemoryCandidateRepository } from "./inMemoryCandidateRepository";
 import { withServer } from "../utils/testServer";
+import { createSummaryService } from "../summary/summary.service";
+import type { SummaryProvider } from "../summary/summary.types";
 
 const validBody = {
   name: "Ada Lovelace",
@@ -11,11 +13,24 @@ const validBody = {
   resumeText: "Wrote the first algorithm.",
 };
 
-// Build the real app around a repository of our choice
-function appWith(repository: InMemoryCandidateRepository) {
+const modelOutput = {
+  contentQuality: "usable",
+  skills: ["algorithm"],
+  highlights: ["Wrote the first algorithm."],
+  injectionSuspected: false,
+};
+
+// Build the real app around a repository of our choice, faking only the AI model
+function appWith(
+  repository: InMemoryCandidateRepository,
+  provider: SummaryProvider = { summarize: async () => modelOutput }
+) {
   return createApp({
     isDatabaseConnected: () => true,
-    candidateService: createCandidateService(repository),
+    candidateService: createCandidateService(
+      repository,
+      createSummaryService(provider)
+    ),
   });
 }
 
@@ -154,6 +169,86 @@ describe("candidate routes", () => {
       const text = await response.text();
       expect(text).not.toContain("secret connection string");
     });
+
+    consoleError.mockRestore();
+  });
+});
+
+describe("POST /api/candidates/:id/summary", () => {
+  test("generates, saves and returns the summary, so a later GET sees it", async () => {
+    await withServer(
+      appWith(new InMemoryCandidateRepository()),
+      async (baseUrl) => {
+        const created = (await (
+          await send(baseUrl, "POST", "/api/candidates", validBody)
+        ).json()) as { id: string };
+
+        const response = await send(
+          baseUrl,
+          "POST",
+          `/api/candidates/${created.id}/summary`
+        );
+
+        expect(response.status).toBe(200);
+        const stored = await (
+          await send(baseUrl, "GET", `/api/candidates/${created.id}`)
+        ).json();
+        expect(stored).toMatchObject({ summary: modelOutput });
+        expect(stored).toHaveProperty("summary.generatedAt");
+      }
+    );
+  });
+
+  test("returns 404 for an unknown candidate, without paying for an AI call", async () => {
+    const summarize = vi.fn(async () => modelOutput);
+
+    await withServer(
+      appWith(new InMemoryCandidateRepository(), { summarize }),
+      async (baseUrl) => {
+        const response = await send(
+          baseUrl,
+          "POST",
+          "/api/candidates/999/summary"
+        );
+
+        expect(response.status).toBe(404);
+        expect(summarize).not.toHaveBeenCalled();
+      }
+    );
+  });
+
+  test("returns a generic 503 when the AI fails, and the candidate is unharmed", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const provider = {
+      summarize: async () => {
+        throw new Error("401 invalid x-api-key sk-secret");
+      },
+    };
+
+    await withServer(
+      appWith(new InMemoryCandidateRepository(), provider),
+      async (baseUrl) => {
+        const created = (await (
+          await send(baseUrl, "POST", "/api/candidates", validBody)
+        ).json()) as { id: string };
+
+        const response = await send(
+          baseUrl,
+          "POST",
+          `/api/candidates/${created.id}/summary`
+        );
+
+        expect(response.status).toBe(503);
+        expect(await response.text()).not.toContain("sk-secret");
+        const stored = await (
+          await send(baseUrl, "GET", `/api/candidates/${created.id}`)
+        ).json();
+        expect(stored).toMatchObject({ name: "Ada Lovelace" });
+        expect(stored).not.toHaveProperty("summary");
+      }
+    );
 
     consoleError.mockRestore();
   });

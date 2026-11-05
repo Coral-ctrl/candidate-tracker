@@ -22,8 +22,10 @@ export interface Note {
 }
 
 export interface CandidateSummary {
+  contentQuality: "usable" | "limited" | "unusable";
   skills: string[];
   highlights: string[];
+  injectionSuspected: boolean;
   generatedAt: string;
 }
 
@@ -118,4 +120,8 @@ export function archiveCandidate(id: string): Promise<Candidate> {
 
 export function unarchiveCandidate(id: string): Promise<Candidate> {
   return request<Candidate>(`/${id}/unarchive`, "POST");
+}
+
+export function generateSummary(id: string): Promise<Candidate> {
+  return request<Candidate>(`/${id}/summary`, "POST");
 }
