@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CandidateList } from "./components/CandidateList";
 import { CandidateForm } from "./components/CandidateForm";
+import { CandidateDetail } from "./components/CandidateDetail";
 
 // Which screen is showing. A "discriminated union": `name` tells TypeScript which shape it has,
 // so candidateId can only be read once we've checked we're on the detail screen.
@@ -33,12 +34,8 @@ function App() {
         />
       )}
 
-      {/* Temporary placeholder: replaced in 3C */}
       {view.name === "detail" && (
-        <section>
-          <p>The detail page for candidate {view.candidateId} arrives in 3C.</p>
-          <button onClick={showList}>Back to list</button>
-        </section>
+        <CandidateDetail candidateId={view.candidateId} onBack={showList} />
       )}
     </main>
   );

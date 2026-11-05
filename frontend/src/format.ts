@@ -9,3 +9,8 @@ export function formatStage(stage: Stage): string {
 export function formatDate(isoDate: string): string {
   return new Date(isoDate).toLocaleDateString();
 }
+
+// Notes need the time as well, because several can be added on the same day
+export function formatDateTime(isoDate: string): string {
+  return new Date(isoDate).toLocaleString();
+}

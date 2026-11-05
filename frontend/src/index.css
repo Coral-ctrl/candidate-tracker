@@ -137,3 +137,87 @@ textarea {
   display: flex;
   gap: 12px;
 }
+
+.back {
+  margin-bottom: 24px;
+}
+
+.detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.detail-header h2 {
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.detail-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-left: auto; /* pushes the controls to the right-hand end */
+}
+
+.detail-actions label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.profile {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  margin: 0 0 24px;
+}
+
+.profile dt {
+  font-weight: 600;
+}
+
+.profile dd {
+  margin: 0;
+}
+
+h3 {
+  margin: 24px 0 8px;
+  color: var(--text-strong);
+}
+
+.resume {
+  max-height: 300px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+  white-space: pre-wrap; /* keep the resume's line breaks, but still wrap long lines */
+  overflow-wrap: anywhere; /* garbled text with no spaces must not break the layout */
+}
+
+.notes {
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.notes li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.notes time {
+  font-size: 12px;
+}
+
+.notes p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
