@@ -27,6 +27,13 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
+  // express.json() refuses bodies over its limit (100kb by default). A big file upload makes this
+  // a normal thing to happen, so it deserves a clear answer rather than a 500.
+  if (error instanceof Error && error.name === "PayloadTooLargeError") {
+    res.status(413).json({ error: "Request body is too large" });
+    return;
+  }
+
   // Anything else is a bug or an outage (e.g. the database dropped).
   // Log the details for us, but send the client a generic message: internal errors can leak
   // information (stack traces, query details) that we don't want to expose.

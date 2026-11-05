@@ -83,6 +83,22 @@ describe("candidate routes", () => {
     );
   });
 
+  test("a body over the size limit returns 413 JSON, not a 500", async () => {
+    await withServer(
+      appWith(new InMemoryCandidateRepository()),
+      async (baseUrl) => {
+        const response = await send(baseUrl, "POST", "/api/candidates", {
+          ...validBody,
+          resumeText: "x".repeat(200_000),
+        });
+        expect(response.status).toBe(413);
+        expect(await response.json()).toEqual({
+          error: "Request body is too large",
+        });
+      }
+    );
+  });
+
   test("unknown id returns 404", async () => {
     await withServer(
       appWith(new InMemoryCandidateRepository()),
