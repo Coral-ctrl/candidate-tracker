@@ -7,13 +7,15 @@ describe("GET /api/health", () => {
     const app = createApp({ isDatabaseConnected: () => false });
 
     const server = app.listen(0); // port 0 = let the OS pick a free port
-    const { port } = server.address() as { port: number };
-    const response = await fetch(`http://localhost:${port}/api/health`);
-    server.close();
-
-    expect(await response.json()).toEqual({
-      status: "ok",
-      database: "disconnected",
-    });
+    try {
+      const { port } = server.address() as { port: number };
+      const response = await fetch(`http://localhost:${port}/api/health`);
+      expect(await response.json()).toEqual({
+        status: "ok",
+        database: "disconnected",
+      });
+    } finally {
+      server.close();
+    }
   });
 });
