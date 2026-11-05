@@ -1,6 +1,8 @@
 import "dotenv/config"; // load .env before anything reads process.env
 import { createApp } from "./app";
 import { connectToDatabase, isDatabaseConnected } from "./config/db";
+import { MongooseCandidateRepository } from "./candidates/candidate.repository";
+import { createCandidateService } from "./candidates/candidate.service";
 
 const PORT = Number(process.env.PORT) || 4000;
 const MONGO_URI =
@@ -9,7 +11,10 @@ const MONGO_URI =
 try {
   await connectToDatabase(MONGO_URI); // top-level await works in ES modules
   // Composition root: the ONE place real dependencies are created and passed in
-  const app = createApp({ isDatabaseConnected });
+  const candidateService = createCandidateService(
+    new MongooseCandidateRepository()
+  );
+  const app = createApp({ isDatabaseConnected, candidateService });
   app.listen(PORT, () =>
     console.log(`API running on http://localhost:${PORT}`)
   );
