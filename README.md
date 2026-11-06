@@ -53,6 +53,10 @@ Open http://localhost:5173.
 
 The hiring team asked me to create my own dataset. `backend/src/candidates/seedData.ts` includes a garbled resume and two prompt-injection attempts, and `docs/JOB_DESCRIPTION.md` is the fictional role they apply to.
 
+## Demo
+
+[Watch the demo video](https://drive.google.com/file/d/1CcFB6SdlbksDc1HSJH_oAyAey90Ugkma/view?usp=sharing)
+
 ## Screenshots
 
 ![Candidate list](docs/screenshots/list.png)
