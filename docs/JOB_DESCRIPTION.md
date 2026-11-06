@@ -1,6 +1,6 @@
 # Full-Stack Engineer (Early Careers)
 
-The brief promised a shared seed dataset, but the hiring team asked me to create my own. This job description is fictional and exists to give the sample candidates in `backend/src/candidates/seedData.ts` something to apply to. It is not sent to the AI: the summary is based on the candidate's text alone.
+This job description is fictional and exists to give the sample candidates in `backend/src/candidates/seedData.ts` something to apply to. It is not sent to the AI: the summary is based on the candidate's text alone.
 
 ## The role
 

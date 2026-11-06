@@ -1,4 +1,4 @@
-/* Deliberately small: UI polish is out of scope (see docs/DECISIONS.md) */
+/* Deliberately small: UI polish is out of scope (see docs/WRITEUP.md) */
 :root {
   --text: #3f3f46;
   --text-strong: #09090b;
@@ -8,20 +8,9 @@
   --error: #b91c1c;
 
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #d4d4d8;
-    --text-strong: #fafafa;
-    --bg: #18181b;
-    --border: #3f3f46;
-    --accent: #60a5fa;
-    --error: #f87171;
-  }
 }
 
 body {
