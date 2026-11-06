@@ -56,6 +56,7 @@ The hiring team asked me to create my own dataset. `backend/src/candidates/seedD
 ## Screenshots
 
 ![Candidate list](docs/screenshots/list.png)
+![Candidate sorted list](docs/screenshots/sorted-list.png)
 ![Candidate detail with AI summary](docs/screenshots/summary.png)
 ![Warning on an injection attempt](docs/screenshots/injection-warning.png)
 
